@@ -1,0 +1,145 @@
+:root {
+  color-scheme: dark;
+  font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  background-color: #0b0f14;
+  color: #f8fafc;
+}
+
+body {
+  margin: 0;
+  background-color: #0b0f14;
+  min-height: 100vh;
+}
+
+#root {
+  min-height: 100vh;
+  display: flex;
+}
+
+.app-container {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  padding: 24px;
+  gap: 24px;
+  box-sizing: border-box;
+}
+
+@media (min-width: 1024px) {
+  .app-layout {
+    display: grid;
+    grid-template-columns: minmax(320px, 360px) 1fr;
+    gap: 24px;
+  }
+}
+
+.panel {
+  background-color: #121722;
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.25);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.panel h2,
+.panel h3 {
+  margin: 0;
+  font-weight: 600;
+}
+
+.inputs-grid {
+  display: grid;
+  gap: 12px;
+}
+
+.inputs-grid label {
+  display: flex;
+  flex-direction: column;
+  font-size: 0.85rem;
+  color: #98a2b3;
+  gap: 4px;
+}
+
+.inputs-grid input {
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #1f2937;
+  background-color: #0b0f14;
+  color: #f8fafc;
+}
+
+.kpis {
+  display: grid;
+  gap: 12px;
+}
+
+@media (min-width: 640px) {
+  .kpis {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+.kpi-card {
+  background-color: #121722;
+  border-radius: 16px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  border: 1px solid rgba(91, 156, 255, 0.1);
+}
+
+.kpi-label {
+  color: #98a2b3;
+  font-size: 0.8rem;
+}
+
+.kpi-value {
+  font-size: 1.3rem;
+  font-weight: 600;
+}
+
+.charts-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 20px;
+}
+
+.chart-card {
+  background-color: #121722;
+  border-radius: 16px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.canvas-wrapper {
+  position: relative;
+  width: 100%;
+  height: 260px;
+}
+
+canvas {
+  background-color: #0f141d;
+  border-radius: 12px;
+  padding: 8px;
+}
+
+fieldset {
+  border: none;
+  padding: 0;
+  margin: 0;
+}
+
+legend {
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.small-note {
+  font-size: 0.75rem;
+  color: #98a2b3;
+}
