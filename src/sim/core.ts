@@ -117,7 +117,7 @@ export function sensitivity(
           params.attachRates[1],
           params.attachRates[2],
           params.attachRates[3],
-        ],
+        ] as [number, number, number, number],
       }),
     },
     {
