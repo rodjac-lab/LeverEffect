@@ -107,118 +107,118 @@ function App(): JSX.Element {
           Ajustez les hypothèses pour comprendre l’impact d’une remise sur A et la contribution des ventes B.
         </p>
       </header>
-      <div className="app-layout">
-        <section className="panel">
-          <h2>Hypothèses</h2>
-          <div className="inputs-grid">
-            <label>
-              Prix A (€)
+      <section className="panel">
+        <h2>Hypothèses</h2>
+        <div className="inputs-grid">
+          <label>
+            Prix A (€)
+            <input
+              type="number"
+              value={params.priceA}
+              onChange={(event) => handleNumberChange('priceA', Number(event.target.value))}
+            />
+          </label>
+          <label>
+            Prix A remisé (€)
+            <input
+              type="number"
+              value={params.newPriceA}
+              onChange={(event) => handleNumberChange('newPriceA', Number(event.target.value))}
+            />
+          </label>
+          <label>
+            Volume A (N)
+            <input
+              type="number"
+              value={params.qtyA}
+              onChange={(event) => handleNumberChange('qtyA', Number(event.target.value))}
+            />
+          </label>
+          <label>
+            Marge totale A (N)
+            <input
+              type="number"
+              value={params.marginATotal}
+              onChange={(event) => handleNumberChange('marginATotal', Number(event.target.value))}
+            />
+          </label>
+          <label>
+            Elasticité prix
+            <input
+              type="number"
+              step="0.1"
+              value={params.elasticity}
+              onChange={(event) => handleNumberChange('elasticity', Number(event.target.value))}
+            />
+          </label>
+          <label>
+            Δ Volume A (override)
+            <input
+              type="number"
+              value={deltaOverrideInput}
+              placeholder="auto"
+              onChange={(event) => handleDeltaOverride(event.target.value)}
+            />
+          </label>
+          <label>
+            Marge unitaire B (€)
+            <input
+              type="number"
+              value={params.marginBUnit}
+              onChange={(event) => handleNumberChange('marginBUnit', Number(event.target.value))}
+            />
+          </label>
+        </div>
+      </section>
+      <section className="panel">
+        <h2>Taux d'attache & Actualisation</h2>
+        <div className="inputs-grid">
+          {params.attachRates.map((rate, index) => (
+            <label key={index}>
+              {index === 0 ? 'Attache N (%)' : `Attache N+${index} (%)`}
               <input
                 type="number"
-                value={params.priceA}
-                onChange={(event) => handleNumberChange('priceA', Number(event.target.value))}
+                value={rate}
+                onChange={(event) => handleAttachChange(index, Number(event.target.value))}
               />
             </label>
-            <label>
-              Prix A remisé (€)
-              <input
-                type="number"
-                value={params.newPriceA}
-                onChange={(event) => handleNumberChange('newPriceA', Number(event.target.value))}
-              />
-            </label>
-            <label>
-              Volume A (N)
-              <input
-                type="number"
-                value={params.qtyA}
-                onChange={(event) => handleNumberChange('qtyA', Number(event.target.value))}
-              />
-            </label>
-            <label>
-              Marge totale A (N)
-              <input
-                type="number"
-                value={params.marginATotal}
-                onChange={(event) => handleNumberChange('marginATotal', Number(event.target.value))}
-              />
-            </label>
-            <label>
-              Elasticité prix
-              <input
-                type="number"
-                step="0.1"
-                value={params.elasticity}
-                onChange={(event) => handleNumberChange('elasticity', Number(event.target.value))}
-              />
-            </label>
-            <label>
-              Δ Volume A (override)
-              <input
-                type="number"
-                value={deltaOverrideInput}
-                placeholder="auto"
-                onChange={(event) => handleDeltaOverride(event.target.value)}
-              />
-            </label>
-            <label>
-              Marge unitaire B (€)
-              <input
-                type="number"
-                value={params.marginBUnit}
-                onChange={(event) => handleNumberChange('marginBUnit', Number(event.target.value))}
-              />
-            </label>
-            <fieldset>
-              <legend>Taux d’attache (%)</legend>
-              {params.attachRates.map((rate, index) => (
-                <label key={index}>
-                  {index === 0 ? 'Année N' : `Année N+${index}`}
-                  <input
-                    type="number"
-                    value={rate}
-                    onChange={(event) => handleAttachChange(index, Number(event.target.value))}
-                  />
-                </label>
-              ))}
-            </fieldset>
-            <label>
-              Taux d’actualisation (%)
-              <input
-                type="number"
-                step="0.5"
-                value={params.discountRatePct}
-                onChange={(event) => handleNumberChange('discountRatePct', Number(event.target.value))}
-              />
-            </label>
+          ))}
+          <label>
+            Taux d'actualisation (%)
+            <input
+              type="number"
+              step="0.5"
+              value={params.discountRatePct}
+              onChange={(event) => handleNumberChange('discountRatePct', Number(event.target.value))}
+            />
+          </label>
+        </div>
+      </section>
+      <section className="panel">
+        <h2>Indicateurs clés</h2>
+        <div className="kpis">
+          <div className="kpi-card">
+            <span className="kpi-label">Δ ventes A</span>
+            <span className="kpi-value">{integerFormatter.format(result.deltaAUnits)} unités</span>
           </div>
-        </section>
-        <section className="panel">
-          <h2>Indicateurs clés</h2>
-          <div className="kpis">
-            <div className="kpi-card">
-              <span className="kpi-label">Δ ventes A</span>
-              <span className="kpi-value">{integerFormatter.format(result.deltaAUnits)} unités</span>
-            </div>
-            <div className="kpi-card">
-              <span className="kpi-label">Δ marge A (N)</span>
-              <span className="kpi-value">{formatCurrency(result.dMarginA)}</span>
-            </div>
-            <div className="kpi-card">
-              <span className="kpi-label">Break-even attache</span>
-              <span className="kpi-value">{result.breakevenPct.toFixed(1)} %</span>
-            </div>
-            <div className="kpi-card">
-              <span className="kpi-label">VAN (Δ marge actualisée)</span>
-              <span className="kpi-value">{formatCurrency(result.npv)}</span>
-            </div>
-            <div className="kpi-card">
-              <span className="kpi-label">Cumul nominal</span>
-              <span className="kpi-value">{formatCurrency(result.cum)}</span>
-            </div>
+          <div className="kpi-card">
+            <span className="kpi-label">Δ marge A (N)</span>
+            <span className="kpi-value">{formatCurrency(result.dMarginA)}</span>
           </div>
-        </section>
-      </div>
+          <div className="kpi-card">
+            <span className="kpi-label">Break-even attache</span>
+            <span className="kpi-value">{result.breakevenPct.toFixed(1)} %</span>
+          </div>
+          <div className="kpi-card">
+            <span className="kpi-label">VAN (Δ marge actualisée)</span>
+            <span className="kpi-value">{formatCurrency(result.npv)}</span>
+          </div>
+          <div className="kpi-card">
+            <span className="kpi-label">Cumul nominal</span>
+            <span className="kpi-value">{formatCurrency(result.cum)}</span>
+          </div>
+        </div>
+      </section>
       <section className="charts-grid">
         <div className="chart-card">
           <h3>Waterfall impact marge</h3>

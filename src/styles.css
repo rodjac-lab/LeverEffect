@@ -38,29 +38,21 @@ header p {
   margin: 0;
 }
 
-@media (min-width: 1024px) {
-  .app-layout {
-    display: grid;
-    grid-template-columns: minmax(320px, 360px) 1fr;
-    gap: 16px;
-  }
-}
-
 .panel {
   background-color: #121722;
-  border-radius: 16px;
-  padding: 16px;
+  border-radius: 12px;
+  padding: 14px 16px;
   box-shadow: 0 12px 32px rgba(0, 0, 0, 0.25);
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 10px;
 }
 
 .panel h2,
 .panel h3 {
   margin: 0;
   font-weight: 600;
-  font-size: 1.1rem;
+  font-size: 1rem;
 }
 
 .inputs-grid {
@@ -69,15 +61,15 @@ header p {
   grid-template-columns: repeat(2, 1fr);
 }
 
-@media (min-width: 768px) {
+@media (min-width: 640px) {
   .inputs-grid {
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(4, 1fr);
   }
 }
 
 @media (min-width: 1024px) {
   .inputs-grid {
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(7, 1fr);
   }
 }
 
@@ -90,7 +82,7 @@ header p {
 }
 
 .inputs-grid input {
-  padding: 8px;
+  padding: 7px 9px;
   border-radius: 8px;
   border: 1px solid #1f2937;
   background-color: #0b0f14;
@@ -98,32 +90,13 @@ header p {
   font-size: 0.9rem;
 }
 
-.inputs-grid fieldset {
-  grid-column: span 2;
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 10px;
-}
-
-@media (min-width: 1024px) {
-  .inputs-grid fieldset {
-    grid-column: span 4;
-    grid-template-columns: repeat(4, 1fr);
-  }
-}
-
 .kpis {
   display: grid;
   gap: 8px;
+  grid-template-columns: repeat(2, 1fr);
 }
 
 @media (min-width: 640px) {
-  .kpis {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-  }
-}
-
-@media (min-width: 1024px) {
   .kpis {
     grid-template-columns: repeat(5, minmax(0, 1fr));
   }
@@ -180,20 +153,6 @@ canvas {
   background-color: #0f141d;
   border-radius: 12px;
   padding: 8px;
-}
-
-fieldset {
-  border: none;
-  padding: 0;
-  margin: 0;
-}
-
-legend {
-  font-weight: 600;
-  margin-bottom: 6px;
-  font-size: 0.75rem;
-  color: #98a2b3;
-  grid-column: 1 / -1;
 }
 
 .small-note {
