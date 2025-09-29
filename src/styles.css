@@ -20,33 +20,47 @@ body {
   display: flex;
   flex-direction: column;
   width: 100%;
-  padding: 24px;
-  gap: 24px;
+  padding: 16px;
+  gap: 16px;
   box-sizing: border-box;
+}
+
+header {
+  margin: 0;
+}
+
+header h1 {
+  margin: 0 0 4px 0;
+  font-size: 1.5rem;
+}
+
+header p {
+  margin: 0;
 }
 
 @media (min-width: 1024px) {
   .app-layout {
     display: grid;
     grid-template-columns: minmax(320px, 360px) 1fr;
-    gap: 24px;
+    gap: 16px;
   }
 }
 
 .panel {
   background-color: #121722;
   border-radius: 16px;
-  padding: 20px;
+  padding: 16px;
   box-shadow: 0 12px 32px rgba(0, 0, 0, 0.25);
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 12px;
 }
 
 .panel h2,
 .panel h3 {
   margin: 0;
   font-weight: 600;
+  font-size: 1.1rem;
 }
 
 .inputs-grid {
@@ -72,7 +86,7 @@ body {
 
 .kpis {
   display: grid;
-  gap: 12px;
+  gap: 8px;
 }
 
 @media (min-width: 640px) {
@@ -81,39 +95,51 @@ body {
   }
 }
 
+@media (min-width: 1024px) {
+  .kpis {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+  }
+}
+
 .kpi-card {
   background-color: #121722;
-  border-radius: 16px;
-  padding: 16px;
+  border-radius: 12px;
+  padding: 10px 12px;
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 4px;
   border: 1px solid rgba(91, 156, 255, 0.1);
 }
 
 .kpi-label {
   color: #98a2b3;
-  font-size: 0.8rem;
+  font-size: 0.7rem;
+  line-height: 1.2;
 }
 
 .kpi-value {
-  font-size: 1.3rem;
+  font-size: 1rem;
   font-weight: 600;
+  line-height: 1.2;
 }
 
 .charts-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-  gap: 20px;
+  gap: 16px;
 }
 
 .chart-card {
   background-color: #121722;
   border-radius: 16px;
-  padding: 16px;
+  padding: 12px;
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 8px;
+}
+
+.chart-card h3 {
+  font-size: 0.95rem;
 }
 
 .canvas-wrapper {
