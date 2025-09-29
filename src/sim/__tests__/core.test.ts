@@ -15,7 +15,7 @@ const baseParams = {
 describe('simulate', () => {
   it('computes expected margin deltas and npv', () => {
     const result = simulate(baseParams);
-    expect(result.dMarginB[0]).toBeCloseTo(result.deltaAUnits * 0.2 * 50 / 100);
+    expect(result.dMarginB[0]).toBeCloseTo(result.deltaAUnits * 0.2 * 50);
     expect(result.yearly[0]).toBeCloseTo(result.dMarginA + result.dMarginB[0]);
     expect(result.npv).toBeCloseTo(npv(result.yearly, baseParams.discountRatePct));
   });
