@@ -1,12 +1,22 @@
 export interface SimulationParams {
-  priceA: number;
-  newPriceA: number;
+  // Produit A - Prix
+  shelfPriceA: number; // Prix fond de rayon (baseline)
+  avgSellingPriceA: number; // Prix de vente moyen (baseline)
+  newShelfPriceA: number; // Nouveau prix fond de rayon
+  newAvgSellingPriceA: number; // Nouveau prix de vente moyen
+
+  // Produit A - Volume & Coûts
   qtyA: number;
-  marginATotal: number;
+  costA: number; // Coût unitaire de A
   elasticity: number;
   deltaAOverride?: number;
-  marginBUnit: number;
+
+  // Produit B
+  priceB: number; // Prix de vente de B
+  costB: number; // Coût unitaire de B
   attachRates: [number, number, number, number];
+
+  // Paramètres financiers
   discountRatePct: number;
 }
 

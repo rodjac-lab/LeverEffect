@@ -13,12 +13,15 @@ import BreakEven from './charts/BreakEven';
 import Scenarios from './charts/Scenarios';
 
 const defaultParams: SimulationParams = {
-  priceA: 999,
-  newPriceA: 949,
+  shelfPriceA: 999,
+  avgSellingPriceA: 899,
+  newShelfPriceA: 949,
+  newAvgSellingPriceA: 849,
   qtyA: 100_000,
-  marginATotal: 20_000_000,
+  costA: 700,
   elasticity: -1.3,
-  marginBUnit: 120,
+  priceB: 200,
+  costB: 80,
   attachRates: [30, 15, 8, 5],
   discountRatePct: 10,
 };
@@ -43,19 +46,21 @@ function App(): JSX.Element {
   const cohortData = useMemo(() => {
     const baseVolume = Math.max(0, result.deltaAUnits);
     const shares = [0.45, 0.35, 0.2];
+    const marginBUnit = params.priceB - params.costB;
     return shares.map((share, idx) => ({
       name: `Cohorte ${idx + 1}`,
       values: params.attachRates.map((attach) =>
-        baseVolume * share * (attach / 100) * params.marginBUnit,
+        baseVolume * share * (attach / 100) * marginBUnit,
       ) as [number, number, number, number],
     }));
-  }, [params.attachRates, params.marginBUnit, result.deltaAUnits]);
+  }, [params.attachRates, params.priceB, params.costB, result.deltaAUnits]);
 
   const scenarioData = useMemo(
     () =>
       discountScenarios.map((discount) => {
-        const newPriceA = params.priceA * (1 - discount / 100);
-        const scenarioResult = simulate({ ...params, newPriceA });
+        const newShelfPriceA = params.shelfPriceA * (1 - discount / 100);
+        const newAvgSellingPriceA = params.avgSellingPriceA * (1 - discount / 100);
+        const scenarioResult = simulate({ ...params, newShelfPriceA, newAvgSellingPriceA });
         return { discount, result: scenarioResult };
       }),
     [params],
@@ -108,38 +113,54 @@ function App(): JSX.Element {
         </p>
       </header>
       <section className="panel">
-        <h2>Hypothèses</h2>
+        <h2>Produit A - Prix et volumes</h2>
         <div className="inputs-grid">
           <label>
-            Prix A (€)
+            Prix fond de rayon A (€)
             <input
               type="number"
-              value={params.priceA}
-              onChange={(event) => handleNumberChange('priceA', Number(event.target.value))}
+              value={params.shelfPriceA || ''}
+              onChange={(event) => handleNumberChange('shelfPriceA', Number(event.target.value))}
             />
           </label>
           <label>
-            Prix A remisé (€)
+            Prix vente moyen A (€)
             <input
               type="number"
-              value={params.newPriceA}
-              onChange={(event) => handleNumberChange('newPriceA', Number(event.target.value))}
+              value={params.avgSellingPriceA || ''}
+              onChange={(event) => handleNumberChange('avgSellingPriceA', Number(event.target.value))}
+            />
+          </label>
+          <label>
+            Nouveau prix fond de rayon A (€)
+            <input
+              type="number"
+              value={params.newShelfPriceA || ''}
+              onChange={(event) => handleNumberChange('newShelfPriceA', Number(event.target.value))}
+            />
+          </label>
+          <label>
+            Nouveau prix vente moyen A (€)
+            <input
+              type="number"
+              value={params.newAvgSellingPriceA || ''}
+              onChange={(event) => handleNumberChange('newAvgSellingPriceA', Number(event.target.value))}
             />
           </label>
           <label>
             Volume A (N)
             <input
               type="number"
-              value={params.qtyA}
+              value={params.qtyA || ''}
               onChange={(event) => handleNumberChange('qtyA', Number(event.target.value))}
             />
           </label>
           <label>
-            Marge totale A (N)
+            Coût unitaire A (€)
             <input
               type="number"
-              value={params.marginATotal}
-              onChange={(event) => handleNumberChange('marginATotal', Number(event.target.value))}
+              value={params.costA || ''}
+              onChange={(event) => handleNumberChange('costA', Number(event.target.value))}
             />
           </label>
           <label>
@@ -147,7 +168,7 @@ function App(): JSX.Element {
             <input
               type="number"
               step="0.1"
-              value={params.elasticity}
+              value={params.elasticity || ''}
               onChange={(event) => handleNumberChange('elasticity', Number(event.target.value))}
             />
           </label>
@@ -160,12 +181,25 @@ function App(): JSX.Element {
               onChange={(event) => handleDeltaOverride(event.target.value)}
             />
           </label>
+        </div>
+      </section>
+      <section className="panel">
+        <h2>Produit B - Prix et coûts</h2>
+        <div className="inputs-grid">
           <label>
-            Marge unitaire B (€)
+            Prix de vente B (€)
             <input
               type="number"
-              value={params.marginBUnit}
-              onChange={(event) => handleNumberChange('marginBUnit', Number(event.target.value))}
+              value={params.priceB || ''}
+              onChange={(event) => handleNumberChange('priceB', Number(event.target.value))}
+            />
+          </label>
+          <label>
+            Coût unitaire B (€)
+            <input
+              type="number"
+              value={params.costB || ''}
+              onChange={(event) => handleNumberChange('costB', Number(event.target.value))}
             />
           </label>
         </div>
@@ -178,7 +212,7 @@ function App(): JSX.Element {
               {index === 0 ? 'Attache N (%)' : `Attache N+${index} (%)`}
               <input
                 type="number"
-                value={rate}
+                value={rate || ''}
                 onChange={(event) => handleAttachChange(index, Number(event.target.value))}
               />
             </label>
@@ -188,7 +222,7 @@ function App(): JSX.Element {
             <input
               type="number"
               step="0.5"
-              value={params.discountRatePct}
+              value={params.discountRatePct || ''}
               onChange={(event) => handleNumberChange('discountRatePct', Number(event.target.value))}
             />
           </label>

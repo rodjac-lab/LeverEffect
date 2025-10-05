@@ -22,27 +22,34 @@ export function npv(cashflows: number[], discountRatePct: number): number {
  */
 export function simulate(params: SimulationParams): SimulationResult {
   const {
-    priceA,
-    newPriceA,
+    shelfPriceA,
+    avgSellingPriceA,
+    newShelfPriceA,
+    newAvgSellingPriceA,
     qtyA,
-    marginATotal,
+    costA,
     elasticity,
     deltaAOverride,
-    marginBUnit,
+    priceB,
+    costB,
     attachRates,
     discountRatePct,
   } = params;
 
-  const unitCostA = qtyA > 0 ? (priceA * qtyA - marginATotal) / qtyA : 0;
-  const baselineMarginPerUnit = priceA - unitCostA;
-  const newMarginPerUnit = newPriceA - unitCostA;
+  // Calcul marges unitaires A
+  const baselineMarginPerUnit = avgSellingPriceA - costA;
+  const newMarginPerUnit = newAvgSellingPriceA - costA;
 
+  // Élasticité s'applique sur prix fond de rayon
   const deltaAUnits = deltaAOverride ??
-    qtyA * elasticity * ((newPriceA - priceA) / priceA);
+    qtyA * elasticity * ((newShelfPriceA - shelfPriceA) / shelfPriceA);
   const newQtyA = qtyA + deltaAUnits;
 
+  // Impact marge A utilise prix de vente moyen
   const dMarginA = newMarginPerUnit * newQtyA - baselineMarginPerUnit * qtyA;
 
+  // Marge unitaire B calculée à partir prix et coût
+  const marginBUnit = priceB - costB;
   const dMarginB = attachRates.map((attach) => deltaAUnits * (attach / 100) * marginBUnit) as [number, number, number, number];
 
   const yearly: [number, number, number, number] = [
@@ -80,8 +87,9 @@ export function breakevenCurve(
   discountPcts: number[],
 ): { discountPct: number; attachRequired: number }[] {
   return discountPcts.map((discountPct) => {
-    const newPriceA = params.priceA * (1 - discountPct / 100);
-    const result = simulate({ ...params, newPriceA });
+    const newShelfPriceA = params.shelfPriceA * (1 - discountPct / 100);
+    const newAvgSellingPriceA = params.avgSellingPriceA * (1 - discountPct / 100);
+    const result = simulate({ ...params, newShelfPriceA, newAvgSellingPriceA });
     return {
       discountPct,
       attachRequired: result.breakevenPct,
@@ -106,7 +114,7 @@ export function sensitivity(
     },
     {
       name: 'Marge B',
-      mutate: (factor: number) => ({ ...params, marginBUnit: params.marginBUnit * factor }),
+      mutate: (factor: number) => ({ ...params, priceB: params.priceB * factor }),
     },
     {
       name: 'Attache N',
