@@ -19,7 +19,7 @@ const defaultParams: SimulationParams = {
   newAvgSellingPriceA: 849,
   qtyA: 100_000,
   costA: 700,
-  elasticity: -1.3,
+  volumeIncreasePercent: 6.5, // Augmentation de volume attendue en %
   priceB: 200,
   costB: 80,
   attachRates: [30, 15, 8, 5],
@@ -29,8 +29,9 @@ const defaultParams: SimulationParams = {
 const discountScenarios = [3, 7, 12];
 
 function App(): JSX.Element {
-  const [params, setParams] = useState<SimulationParams & { deltaAOverride?: number | undefined }>(
-    defaultParams,
+  const [params, setParams] = useState<SimulationParams>(defaultParams);
+  const [volumeIncreaseInput, setVolumeIncreaseInput] = useState<string>(
+    defaultParams.volumeIncreasePercent?.toString() || '',
   );
   const [deltaOverrideInput, setDeltaOverrideInput] = useState<string>('');
 
@@ -84,6 +85,19 @@ function App(): JSX.Element {
     });
   };
 
+  const handleVolumeIncreaseChange = (value: string) => {
+    setVolumeIncreaseInput(value);
+    const trimmed = value.trim();
+    if (trimmed === '') {
+      setParams((prev) => ({ ...prev, volumeIncreasePercent: undefined }));
+      return;
+    }
+    const parsed = Number(trimmed);
+    if (!Number.isNaN(parsed)) {
+      setParams((prev) => ({ ...prev, volumeIncreasePercent: parsed }));
+    }
+  };
+
   const handleDeltaOverride = (value: string) => {
     setDeltaOverrideInput(value);
     const trimmed = value.trim();
@@ -112,122 +126,133 @@ function App(): JSX.Element {
           Ajustez les hypothèses pour comprendre l’impact d’une remise sur A et la contribution des ventes B.
         </p>
       </header>
-      <section className="panel">
-        <h2>Produit A - Prix et volumes</h2>
-        <div className="inputs-grid">
-          <label>
-            Prix fond de rayon A (€)
-            <input
-              type="number"
-              value={params.shelfPriceA || ''}
-              onChange={(event) => handleNumberChange('shelfPriceA', Number(event.target.value))}
-            />
-          </label>
-          <label>
-            Prix vente moyen A (€)
-            <input
-              type="number"
-              value={params.avgSellingPriceA || ''}
-              onChange={(event) => handleNumberChange('avgSellingPriceA', Number(event.target.value))}
-            />
-          </label>
-          <label>
-            Nouveau prix fond de rayon A (€)
-            <input
-              type="number"
-              value={params.newShelfPriceA || ''}
-              onChange={(event) => handleNumberChange('newShelfPriceA', Number(event.target.value))}
-            />
-          </label>
-          <label>
-            Nouveau prix vente moyen A (€)
-            <input
-              type="number"
-              value={params.newAvgSellingPriceA || ''}
-              onChange={(event) => handleNumberChange('newAvgSellingPriceA', Number(event.target.value))}
-            />
-          </label>
-          <label>
-            Volume A (N)
-            <input
-              type="number"
-              value={params.qtyA || ''}
-              onChange={(event) => handleNumberChange('qtyA', Number(event.target.value))}
-            />
-          </label>
-          <label>
-            Coût unitaire A (€)
-            <input
-              type="number"
-              value={params.costA || ''}
-              onChange={(event) => handleNumberChange('costA', Number(event.target.value))}
-            />
-          </label>
-          <label>
-            Elasticité prix
-            <input
-              type="number"
-              step="0.1"
-              value={params.elasticity || ''}
-              onChange={(event) => handleNumberChange('elasticity', Number(event.target.value))}
-            />
-          </label>
-          <label>
-            Δ Volume A (override)
-            <input
-              type="number"
-              value={deltaOverrideInput}
-              placeholder="auto"
-              onChange={(event) => handleDeltaOverride(event.target.value)}
-            />
-          </label>
-        </div>
-      </section>
-      <section className="panel">
-        <h2>Produit B - Prix et coûts</h2>
-        <div className="inputs-grid">
-          <label>
-            Prix de vente B (€)
-            <input
-              type="number"
-              value={params.priceB || ''}
-              onChange={(event) => handleNumberChange('priceB', Number(event.target.value))}
-            />
-          </label>
-          <label>
-            Coût unitaire B (€)
-            <input
-              type="number"
-              value={params.costB || ''}
-              onChange={(event) => handleNumberChange('costB', Number(event.target.value))}
-            />
-          </label>
-        </div>
-      </section>
-      <section className="panel">
-        <h2>Taux d'attache & Actualisation</h2>
-        <div className="inputs-grid">
-          {params.attachRates.map((rate, index) => (
-            <label key={index}>
-              {index === 0 ? 'Attache N (%)' : `Attache N+${index} (%)`}
+      <div className="inputs-panels">
+        <section className="panel compact-panel">
+          <h2>Produit A - Pricing & Volumes</h2>
+          <div className="dual-columns">
+            <div className="column">
+              <h3>Baseline</h3>
+              <label>
+                Prix fond de rayon (€)
+                <input
+                  type="number"
+                  value={params.shelfPriceA || ''}
+                  onChange={(event) => handleNumberChange('shelfPriceA', Number(event.target.value))}
+                />
+              </label>
+              <label>
+                Prix vente moyen (€)
+                <input
+                  type="number"
+                  value={params.avgSellingPriceA || ''}
+                  onChange={(event) => handleNumberChange('avgSellingPriceA', Number(event.target.value))}
+                />
+              </label>
+              <label>
+                Volume (unités)
+                <input
+                  type="number"
+                  value={params.qtyA || ''}
+                  onChange={(event) => handleNumberChange('qtyA', Number(event.target.value))}
+                />
+              </label>
+              <label>
+                Coût unitaire (€)
+                <input
+                  type="number"
+                  value={params.costA || ''}
+                  onChange={(event) => handleNumberChange('costA', Number(event.target.value))}
+                />
+              </label>
+            </div>
+            <div className="column">
+              <h3>Nouveau scénario</h3>
+              <label>
+                Prix fond de rayon (€)
+                <input
+                  type="number"
+                  value={params.newShelfPriceA || ''}
+                  onChange={(event) => handleNumberChange('newShelfPriceA', Number(event.target.value))}
+                />
+              </label>
+              <label>
+                Prix vente moyen (€)
+                <input
+                  type="number"
+                  value={params.newAvgSellingPriceA || ''}
+                  onChange={(event) => handleNumberChange('newAvgSellingPriceA', Number(event.target.value))}
+                />
+              </label>
+              <label>
+                Augmentation volume (%)
+                <input
+                  type="number"
+                  step="0.1"
+                  value={volumeIncreaseInput}
+                  placeholder="ex: 6.5"
+                  onChange={(event) => handleVolumeIncreaseChange(event.target.value)}
+                />
+              </label>
+              <label>
+                <span className="label-small">Δ Volume override (unités)</span>
+                <input
+                  type="number"
+                  value={deltaOverrideInput}
+                  placeholder="optionnel"
+                  onChange={(event) => handleDeltaOverride(event.target.value)}
+                />
+              </label>
+            </div>
+          </div>
+        </section>
+
+        <section className="panel compact-panel">
+          <h2>Produit B - Pricing</h2>
+          <div className="inline-inputs">
+            <label>
+              Prix de vente (€)
               <input
                 type="number"
-                value={rate || ''}
-                onChange={(event) => handleAttachChange(index, Number(event.target.value))}
+                value={params.priceB || ''}
+                onChange={(event) => handleNumberChange('priceB', Number(event.target.value))}
               />
             </label>
-          ))}
-          <label>
-            Taux d'actualisation (%)
-            <input
-              type="number"
-              step="0.5"
-              value={params.discountRatePct || ''}
-              onChange={(event) => handleNumberChange('discountRatePct', Number(event.target.value))}
-            />
-          </label>
-        </div>
-      </section>
+            <label>
+              Coût unitaire (€)
+              <input
+                type="number"
+                value={params.costB || ''}
+                onChange={(event) => handleNumberChange('costB', Number(event.target.value))}
+              />
+            </label>
+          </div>
+        </section>
+
+        <section className="panel compact-panel">
+          <h2>Effet de levier</h2>
+          <div className="inline-inputs">
+            {params.attachRates.map((rate, index) => (
+              <label key={index} className="small-input">
+                {index === 0 ? 'N (%)' : `N+${index} (%)`}
+                <input
+                  type="number"
+                  value={rate || ''}
+                  onChange={(event) => handleAttachChange(index, Number(event.target.value))}
+                />
+              </label>
+            ))}
+            <label>
+              Taux actu. (%)
+              <input
+                type="number"
+                step="0.5"
+                value={params.discountRatePct || ''}
+                onChange={(event) => handleNumberChange('discountRatePct', Number(event.target.value))}
+              />
+            </label>
+          </div>
+        </section>
+      </div>
       <section className="panel">
         <h2>Indicateurs clés</h2>
         <div className="kpis">
@@ -250,6 +275,10 @@ function App(): JSX.Element {
           <div className="kpi-card">
             <span className="kpi-label">Cumul nominal</span>
             <span className="kpi-value">{formatCurrency(result.cum)}</span>
+          </div>
+          <div className="kpi-card">
+            <span className="kpi-label">Élasticité calculée</span>
+            <span className="kpi-value">{result.calculatedElasticity.toFixed(2)}</span>
           </div>
         </div>
       </section>

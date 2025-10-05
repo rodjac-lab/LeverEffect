@@ -55,6 +55,101 @@ header p {
   font-size: 1rem;
 }
 
+/* Compact inputs layout */
+.inputs-panels {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+@media (min-width: 1024px) {
+  .inputs-panels {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr;
+    gap: 12px;
+  }
+}
+
+.compact-panel {
+  padding: 12px 14px;
+}
+
+.compact-panel h2 {
+  font-size: 0.9rem;
+  margin-bottom: 8px;
+}
+
+.compact-panel h3 {
+  font-size: 0.8rem;
+  margin-bottom: 6px;
+  color: #98a2b3;
+}
+
+/* Dual columns for Produit A */
+.dual-columns {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.column {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.column label {
+  display: flex;
+  flex-direction: column;
+  font-size: 0.7rem;
+  color: #98a2b3;
+  gap: 3px;
+}
+
+.column input {
+  padding: 6px 8px;
+  border-radius: 6px;
+  border: 1px solid #1f2937;
+  background-color: #0b0f14;
+  color: #f8fafc;
+  font-size: 0.85rem;
+}
+
+/* Inline inputs for B and levier */
+.inline-inputs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.inline-inputs label {
+  display: flex;
+  flex-direction: column;
+  font-size: 0.7rem;
+  color: #98a2b3;
+  gap: 3px;
+  flex: 1;
+  min-width: 80px;
+}
+
+.inline-inputs label.small-input {
+  flex: 0 0 70px;
+}
+
+.inline-inputs input {
+  padding: 6px 8px;
+  border-radius: 6px;
+  border: 1px solid #1f2937;
+  background-color: #0b0f14;
+  color: #f8fafc;
+  font-size: 0.85rem;
+}
+
+.label-small {
+  font-size: 0.65rem;
+}
+
+/* Legacy grid styles (kept for compatibility) */
 .inputs-grid {
   display: grid;
   gap: 10px;
@@ -98,7 +193,13 @@ header p {
 
 @media (min-width: 640px) {
   .kpis {
-    grid-template-columns: repeat(5, minmax(0, 1fr));
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 1024px) {
+  .kpis {
+    grid-template-columns: repeat(6, minmax(0, 1fr));
   }
 }
 

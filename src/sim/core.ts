@@ -28,7 +28,7 @@ export function simulate(params: SimulationParams): SimulationResult {
     newAvgSellingPriceA,
     qtyA,
     costA,
-    elasticity,
+    volumeIncreasePercent,
     deltaAOverride,
     priceB,
     costB,
@@ -40,9 +40,32 @@ export function simulate(params: SimulationParams): SimulationResult {
   const baselineMarginPerUnit = avgSellingPriceA - costA;
   const newMarginPerUnit = newAvgSellingPriceA - costA;
 
-  // Élasticité s'applique sur prix fond de rayon
-  const deltaAUnits = deltaAOverride ??
-    qtyA * elasticity * ((newShelfPriceA - shelfPriceA) / shelfPriceA);
+  // Calcul du delta de prix (en %)
+  const priceChangePercent = ((newShelfPriceA - shelfPriceA) / shelfPriceA) * 100;
+
+  // Calcul de l'élasticité et du volume
+  let deltaAUnits: number;
+  let calculatedElasticity: number;
+
+  if (deltaAOverride !== undefined) {
+    // Override absolu fourni
+    deltaAUnits = deltaAOverride;
+    calculatedElasticity = priceChangePercent !== 0
+      ? ((deltaAUnits / qtyA) * 100) / priceChangePercent
+      : 0;
+  } else if (volumeIncreasePercent !== undefined) {
+    // % augmentation fourni par l'utilisateur
+    deltaAUnits = qtyA * (volumeIncreasePercent / 100);
+    // Calcul de l'élasticité: (Δ Volume % / Δ Prix %)
+    calculatedElasticity = priceChangePercent !== 0
+      ? volumeIncreasePercent / priceChangePercent
+      : 0;
+  } else {
+    // Pas d'input utilisateur, delta = 0
+    deltaAUnits = 0;
+    calculatedElasticity = 0;
+  }
+
   const newQtyA = qtyA + deltaAUnits;
 
   // Impact marge A utilise prix de vente moyen
@@ -74,6 +97,7 @@ export function simulate(params: SimulationParams): SimulationResult {
     cum,
     npv: npvValue,
     breakevenPct,
+    calculatedElasticity,
   };
 }
 
@@ -109,8 +133,13 @@ export function sensitivity(
   const baseline = simulate(params);
   const scenarios = [
     {
-      name: 'Elasticité',
-      mutate: (factor: number) => ({ ...params, elasticity: params.elasticity * factor }),
+      name: 'Volume (%)',
+      mutate: (factor: number) => ({
+        ...params,
+        volumeIncreasePercent: params.volumeIncreasePercent
+          ? params.volumeIncreasePercent * factor
+          : undefined,
+      }),
     },
     {
       name: 'Marge B',

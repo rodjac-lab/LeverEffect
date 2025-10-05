@@ -8,7 +8,7 @@ const baseParams = {
   newAvgSellingPriceA: 81,
   qtyA: 1000,
   costA: 60,
-  elasticity: -1.2,
+  volumeIncreasePercent: 12, // 10% baisse prix → 12% hausse volume
   priceB: 100,
   costB: 50,
   attachRates: [20, 10, 6, 4] as [number, number, number, number],

@@ -8,8 +8,8 @@ export interface SimulationParams {
   // Produit A - Volume & Coûts
   qtyA: number;
   costA: number; // Coût unitaire de A
-  elasticity: number;
-  deltaAOverride?: number;
+  volumeIncreasePercent?: number; // % augmentation attendue du volume (input user-friendly)
+  deltaAOverride?: number; // Override absolu du volume (optionnel)
 
   // Produit B
   priceB: number; // Prix de vente de B
@@ -28,4 +28,5 @@ export interface SimulationResult {
   cum: number;
   npv: number;
   breakevenPct: number;
+  calculatedElasticity: number; // Élasticité calculée (pour éduquer l'utilisateur)
 }
